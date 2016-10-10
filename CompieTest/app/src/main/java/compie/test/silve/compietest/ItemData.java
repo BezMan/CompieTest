@@ -4,7 +4,7 @@ package compie.test.silve.compietest;
  * Created by silve on 10-Oct-16.
  */
 
-class DataVideo {
+class ItemData {
 
     private String Title;
     private String Link;

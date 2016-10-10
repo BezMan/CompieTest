@@ -1,12 +1,9 @@
 package compie.test.silve.compietest;
 
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,8 +27,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.data;
-
 public class MainActivity extends AppCompatActivity {
 
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
@@ -44,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> spinnerArray = new ArrayList<>();
     ArrayAdapter<String> adapter;
     ArrayList<JSONObject> playlistsArray = new ArrayList<>();
-    List<DataVideo> dataList;
+    List<ItemData> dataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
 //                                            Movie movie = movieList.get(position);
-                DataVideo data = dataList.get(position);
+                ItemData data = dataList.get(position);
 //                Toast.makeText(getApplicationContext(), data.getLink(), Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(data.getLink())));
 
@@ -194,13 +188,13 @@ public class MainActivity extends AppCompatActivity {
                                 // Extract dataList from json and store into ArrayList as class objects
                                 for (int i = 0; i < pListItems.length(); i++) {
                                     JSONObject json_data = pListItems.getJSONObject(i);
-                                    DataVideo dataVideo = new DataVideo();
+                                    ItemData itemData = new ItemData();
 
-                                    dataVideo.setTitle(json_data.getString("Title"));
-                                    dataVideo.setLink(json_data.getString("link"));
-                                    dataVideo.setThumb(json_data.getString("thumb"));
+                                    itemData.setTitle(json_data.getString("Title"));
+                                    itemData.setLink(json_data.getString("link"));
+                                    itemData.setThumb(json_data.getString("thumb"));
 
-                                    dataList.add(dataVideo);
+                                    dataList.add(itemData);
                                     mAdapter = new MyAdapter(MainActivity.this, dataList);
                                     recyclerView.setAdapter(mAdapter);
                                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));

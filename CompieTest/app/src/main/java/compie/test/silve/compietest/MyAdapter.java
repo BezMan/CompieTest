@@ -1,23 +1,17 @@
 package compie.test.silve.compietest;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import java.util.Collections;
 import java.util.List;
-
-import static android.R.attr.textSize;
 
 /**
  * Created by silve on 10-Oct-16.
@@ -27,12 +21,10 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private Context context;
     private LayoutInflater inflater;
-    private List<DataVideo> data = Collections.emptyList();
-    DataVideo current;
-    int currentPos = 0;
+    private List<ItemData> data = Collections.emptyList();
 
-    // create constructor to innitilize context and dataList sent from MainActivity
-    MyAdapter(Context context, List<DataVideo> data) {
+    // create constructor to initialize context and dataList sent from MainActivity
+    MyAdapter(Context context, List<ItemData> data) {
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.data = data;
@@ -51,13 +43,13 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         // Get current position of item in recyclerview to bind dataList and assign values from list
         MyHolder myHolder = (MyHolder) holder;
-        DataVideo current = data.get(position);
+        ItemData current = data.get(position);
         myHolder.textTitle.setText(current.getTitle());
 
         // load image into imageview using glide
         Glide.with(context).load(current.getThumb())
-//                .placeholder(R.drawable.ic_img_error)
-//                .error(R.drawable.ic_img_error)
+                .placeholder(R.mipmap.ic_launcher)
+//                .error(R.mipmap.ic_launcher)
                 .into(myHolder.ivThumb);
 
     }
