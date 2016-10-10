@@ -2,6 +2,9 @@ package compie.test.silve.compietest;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Movie;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +30,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.data;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,9 +51,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initialize();
+
         new AsyncFetch().execute();
 
+
+    }
+
+    private void initialize() {
+        spinner = (Spinner) findViewById(R.id.spinner);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+//                                            Movie movie = movieList.get(position);
+                DataVideo data = dataList.get(position);
+//                Toast.makeText(getApplicationContext(), data.getLink(), Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(data.getLink())));
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
     }
 
@@ -136,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             //this method will be running on UI thread
-
             pdLoading.dismiss();
             try {
 
@@ -148,10 +177,6 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject playlistObj = jArray.getJSONObject(k);
                     playlistsArray.add(playlistObj);
                     spinnerArray.add(playlistObj.getString("ListTitle"));
-
-                    // Setup and Handover dataList to recyclerview
-                    recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-                    spinner = (Spinner) findViewById(R.id.spinner);
 
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(adapter);

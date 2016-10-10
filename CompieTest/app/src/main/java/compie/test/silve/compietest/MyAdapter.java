@@ -54,9 +54,7 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         DataVideo current = data.get(position);
         myHolder.textTitle.setText(current.getTitle());
 
-
         // load image into imageview using glide
-        //TODO:
         Glide.with(context).load(current.getThumb())
 //                .placeholder(R.drawable.ic_img_error)
 //                .error(R.drawable.ic_img_error)
