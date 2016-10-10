@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,6 +28,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.data;
+
 public class MainActivity extends AppCompatActivity {
 
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
@@ -33,8 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MyAdapter mAdapter;
     private Spinner spinner;
-    List<String> spinnerArray =  new ArrayList<>();
-
+    List<String> spinnerArray = new ArrayList<>();
+    ArrayAdapter<String> adapter;
+    ArrayList<JSONObject> playlistsArray = new ArrayList<>();
+    List<DataVideo> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +49,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         new AsyncFetch().execute();
-    }
 
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+
+    }
 
 
     private class AsyncFetch extends AsyncTask<String, String, String> {
@@ -134,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             //this method will be running on UI thread
 
             pdLoading.dismiss();
-            List<DataVideo> data=new ArrayList<>();
+//            data = new ArrayList<>();
 
             pdLoading.dismiss();
             try {
@@ -142,36 +151,71 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(result);
                 JSONArray jArray = jsonObject.getJSONArray("Playlists");
 
-                for(int k=0;k<jArray.length();k++) {
+                for (int k = 0; k < jArray.length(); k++) {
 
                     JSONObject playlistObj = jArray.getJSONObject(k);
+                    playlistsArray.add(playlistObj);
+                    spinnerArray.add(playlistObj.getString("ListTitle"));
 
-                    try {
-                        spinnerArray.add(playlistObj.getString("ListTitle"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    JSONArray pListItems = playlistObj.getJSONArray("ListItems");
-
-                    // Extract data from json and store into ArrayList as class objects
-                    for (int i = 0; i < pListItems.length(); i++) {
-                        JSONObject json_data = pListItems.getJSONObject(i);
-                        DataVideo dataVideo = new DataVideo();
-
-                        dataVideo.setTitle(json_data.getString("Title"));
-                        dataVideo.setLink(json_data.getString("link"));
-                        dataVideo.setThumb(json_data.getString("thumb"));
-
-                        data.add(dataVideo);
-                    }
+//                    JSONArray pListItems = playlistObj.getJSONArray("ListItems");
+//
+//                    // Extract data from json and store into ArrayList as class objects
+//                    for (int i = 0; i < pListItems.length(); i++) {
+//                        JSONObject json_data = pListItems.getJSONObject(i);
+//                        DataVideo dataVideo = new DataVideo();
+//
+//                        dataVideo.setTitle(json_data.getString("Title"));
+//                        dataVideo.setLink(json_data.getString("link"));
+//                        dataVideo.setThumb(json_data.getString("thumb"));
+//
+//                        data.add(dataVideo);
+//                    }
 
                     // Setup and Handover data to recyclerview
                     recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-                    mAdapter = new MyAdapter(MainActivity.this, data);
-                    recyclerView.setAdapter(mAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                    spinner = (Spinner) findViewById(R.id.spinner);
+
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(adapter);
+
+                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                            Toast.makeText(getApplicationContext(), ""+position, Toast.LENGTH_SHORT).show();
+
+
+                            try {
+                                data = new ArrayList<>();
+                                JSONObject jsonObject1 = playlistsArray.get(position);
+                                JSONArray pListItems = jsonObject1.getJSONArray("ListItems");
+
+
+                                // Extract data from json and store into ArrayList as class objects
+                                for (int i = 0; i < pListItems.length(); i++) {
+                                    JSONObject json_data = pListItems.getJSONObject(i);
+                                    DataVideo dataVideo = new DataVideo();
+
+                                    dataVideo.setTitle(json_data.getString("Title"));
+                                    dataVideo.setLink(json_data.getString("link"));
+                                    dataVideo.setThumb(json_data.getString("thumb"));
+
+                                    data.add(dataVideo);
+                                    mAdapter = new MyAdapter(MainActivity.this, data);
+                                    recyclerView.setAdapter(mAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+
 
                 }
             } catch (JSONException e) {

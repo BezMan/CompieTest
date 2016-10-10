@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CompieTest</string>
+    <string name="spinner">Choose Playlist:</string>
 </resources>
