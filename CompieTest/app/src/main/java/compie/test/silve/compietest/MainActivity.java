@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,8 +27,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.data;
-
 public class MainActivity extends AppCompatActivity {
 
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
@@ -41,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> spinnerArray = new ArrayList<>();
     ArrayAdapter<String> adapter;
     ArrayList<JSONObject> playlistsArray = new ArrayList<>();
-    List<DataVideo> data;
+    List<DataVideo> dataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 // Enter URL address where your json file resides
-                // Even you can make call to php file which returns json data
+                // Even you can make call to php file which returns json dataList
                 url = new URL("http://www.razor-tech.co.il/hiring/youtube-api.json");
 
             } catch (MalformedURLException e) {
@@ -86,13 +83,13 @@ public class MainActivity extends AppCompatActivity {
             }
             try {
 
-                // Setup HttpURLConnection class to send and receive data from php and mysql
+                // Setup HttpURLConnection class to send and receive dataList from php and mysql
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(READ_TIMEOUT);
                 conn.setConnectTimeout(CONNECTION_TIMEOUT);
                 conn.setRequestMethod("GET");
 
-                // setDoOutput to true as we recieve data from json file
+                // setDoOutput to true as we recieve dataList from json file
                 conn.setDoOutput(true);
 
             } catch (IOException e1) {
@@ -108,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 // Check if successful connection made
                 if (response_code == HttpURLConnection.HTTP_OK) {
 
-                    // Read data sent from server
+                    // Read dataList sent from server
                     InputStream input = conn.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                     StringBuilder result = new StringBuilder();
@@ -118,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         result.append(line);
                     }
 
-                    // Pass data to onPostExecute method
+                    // Pass dataList to onPostExecute method
                     return (result.toString());
 
                 } else {
@@ -136,14 +133,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         protected void onPostExecute(String result) {
-
             //this method will be running on UI thread
-
-            pdLoading.dismiss();
-//            data = new ArrayList<>();
 
             pdLoading.dismiss();
             try {
@@ -157,21 +149,7 @@ public class MainActivity extends AppCompatActivity {
                     playlistsArray.add(playlistObj);
                     spinnerArray.add(playlistObj.getString("ListTitle"));
 
-//                    JSONArray pListItems = playlistObj.getJSONArray("ListItems");
-//
-//                    // Extract data from json and store into ArrayList as class objects
-//                    for (int i = 0; i < pListItems.length(); i++) {
-//                        JSONObject json_data = pListItems.getJSONObject(i);
-//                        DataVideo dataVideo = new DataVideo();
-//
-//                        dataVideo.setTitle(json_data.getString("Title"));
-//                        dataVideo.setLink(json_data.getString("link"));
-//                        dataVideo.setThumb(json_data.getString("thumb"));
-//
-//                        data.add(dataVideo);
-//                    }
-
-                    // Setup and Handover data to recyclerview
+                    // Setup and Handover dataList to recyclerview
                     recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
                     spinner = (Spinner) findViewById(R.id.spinner);
 
@@ -182,15 +160,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 //                            Toast.makeText(getApplicationContext(), ""+position, Toast.LENGTH_SHORT).show();
-
-
                             try {
-                                data = new ArrayList<>();
+                                dataList = new ArrayList<>();
                                 JSONObject jsonObject1 = playlistsArray.get(position);
                                 JSONArray pListItems = jsonObject1.getJSONArray("ListItems");
 
 
-                                // Extract data from json and store into ArrayList as class objects
+                                // Extract dataList from json and store into ArrayList as class objects
                                 for (int i = 0; i < pListItems.length(); i++) {
                                     JSONObject json_data = pListItems.getJSONObject(i);
                                     DataVideo dataVideo = new DataVideo();
@@ -199,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
                                     dataVideo.setLink(json_data.getString("link"));
                                     dataVideo.setThumb(json_data.getString("thumb"));
 
-                                    data.add(dataVideo);
-                                    mAdapter = new MyAdapter(MainActivity.this, data);
+                                    dataList.add(dataVideo);
+                                    mAdapter = new MyAdapter(MainActivity.this, dataList);
                                     recyclerView.setAdapter(mAdapter);
                                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
@@ -219,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             } catch (JSONException e) {
-                Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
 
         }

@@ -1,17 +1,23 @@
 package compie.test.silve.compietest;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import java.util.Collections;
 import java.util.List;
+
+import static android.R.attr.textSize;
 
 /**
  * Created by silve on 10-Oct-16.
@@ -25,7 +31,7 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     DataVideo current;
     int currentPos = 0;
 
-    // create constructor to innitilize context and data sent from MainActivity
+    // create constructor to innitilize context and dataList sent from MainActivity
     MyAdapter(Context context, List<DataVideo> data) {
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -39,16 +45,14 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return new MyHolder(view);
     }
 
-    // Bind data
+    // Bind dataList
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        // Get current position of item in recyclerview to bind data and assign values from list
+        // Get current position of item in recyclerview to bind dataList and assign values from list
         MyHolder myHolder = (MyHolder) holder;
         DataVideo current = data.get(position);
         myHolder.textTitle.setText(current.getTitle());
-        myHolder.textLink.setText(current.getLink());
-
 
 
         // load image into imageview using glide
@@ -72,7 +76,6 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private class MyHolder extends RecyclerView.ViewHolder {
 
         TextView textTitle;
-        TextView textLink;
         ImageView ivThumb;
 
 
@@ -81,7 +84,6 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             super(itemView);
             textTitle = (TextView) itemView.findViewById(R.id.textTitle);
             ivThumb = (ImageView) itemView.findViewById(R.id.ivThumb);
-            textLink = (TextView) itemView.findViewById(R.id.textLink);
         }
 
     }
